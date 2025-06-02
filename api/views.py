@@ -18,7 +18,7 @@ def studen(request):
             return Response(serialize.data,status=status.HTTP_201_CREATED)
         return Response(serialize.error,status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET','PUT'])
+@api_view(['GET','PUT','DELETE'])
 def student(request,pk):
     try:
         student = SerializerModel.objects.get(pk=pk)
@@ -36,3 +36,7 @@ def student(request,pk):
             return Response(serialize.data,status=status.HTTP_200_OK)
         else:
             return Response(serialize.data,status=status.HTTP_404_NOT_FOUND)
+        
+    elif request.method == 'DELETE':
+        student.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)    
