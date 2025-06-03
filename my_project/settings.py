@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest',
     'rest_framework',
     'api',
+    'employees'
 
 ]
 
