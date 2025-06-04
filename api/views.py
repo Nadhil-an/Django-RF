@@ -1,17 +1,15 @@
-from .serializers import StudentSerializer,employeeSerializer
-from rest.models import SerializerModel
-
 from employees.models import employee
 from django.http import Http404
-
+from django.shortcuts import get_object_or_404
 
 #rest_framework
-
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import mixins,generics
+from rest_framework import mixins,generics,viewsets
+from .serializers import StudentSerializer,employeeSerializer
+from rest.models import SerializerModel
 
 
 
@@ -125,18 +123,34 @@ class singlemployee(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.Des
 #     queryset = employee.objects.all()
 #     serializer_class = employeeSerializer
 
-class singlemployee(generics.RetrieveUpdateDestroyAPIView):
-    queryset = employee.objects.all()
-    serializer_class = employeeSerializer
-    lookup_field = 'pk'
-
-    
-
-
-
+# class singlemployee(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = employee.objects.all()
+#     serializer_class = employeeSerializer
+#     lookup_field = 'pk'
 
 #multiple generic apic views
 
-class getemployee(generics.ListCreateAPIView):
-    queryset = employee.objects.all()
-    serializer_class = employeeSerializer
+# class getemployee(generics.ListCreateAPIView):
+#     queryset = employee.objects.all()
+#     serializer_class = employeeSerializer
+
+
+class EmployeeViewset(viewsets.ViewSet):
+    def list(self, request):
+        queryset = employee.objects.all()
+        serializer_class = employeeSerializer(queryset, many=True)
+        return Response(serializer_class.data)
+    
+    def create(self, request):
+        serializer = employeeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors)
+    def retrieve(self, request, pk=None):
+        employee_dtl = get_object_or_404(employee, pk=pk)
+        serializer = employeeSerializer(employee_dtl)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        
+
