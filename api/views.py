@@ -10,7 +10,9 @@ from rest_framework.response import Response
 from rest_framework import mixins,generics,viewsets
 from .serializers import StudentSerializer,employeeSerializer
 from rest.models import SerializerModel
-
+from blogs.serializer import BlogSeriallizer,CommentSerializer
+from blogs.models import Comment,Blog
+from .paginations import CustomPagination
 
 
 
@@ -134,7 +136,7 @@ class singlemployee(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.Des
 #     queryset = employee.objects.all()
 #     serializer_class = employeeSerializer
 
-
+"""
 class EmployeeViewset(viewsets.ViewSet):
     def list(self, request):
         queryset = employee.objects.all()
@@ -151,6 +153,42 @@ class EmployeeViewset(viewsets.ViewSet):
         employee_dtl = get_object_or_404(employee, pk=pk)
         serializer = employeeSerializer(employee_dtl)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
+    def update(self, request, pk):
+        employee_dtl = get_object_or_404(employee, pk=pk)
+        serializer = employeeSerializer(employee_dtl)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
         
+    def delete(self, request, pk):
+        employee_dtl = get_object_or_404(employee, pk=pk)
+        employee_dtl.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+"""
 
+
+class EmployeeViewset(viewsets.ModelViewSet):
+    queryset = employee.objects.all()
+    serializer_class = employeeSerializer
+    pagination_class = CustomPagination
+    
+class blogviewset(generics.ListCreateAPIView):
+    queryset = Blog.objects.all()
+    serializer_class = BlogSeriallizer
+
+class commentviewset(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+
+class BlogDetailsView(generics.RetrieveUpdateDestroyAPIView):
+    queryset =  Blog.objects.all()
+    serializer_class = BlogSeriallizer
+    lookup_field = 'pk'
+
+class CommentDetailsView(generics.RetrieveUpdateDestroyAPIView):
+    queryset =  Comment.objects.all()
+    serializer_class = CommentSerializer
+    lookup_field = 'pk'
+      
