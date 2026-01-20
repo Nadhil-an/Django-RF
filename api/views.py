@@ -88,25 +88,42 @@ def studentDetailview(request, pk):
 #         employee.delete()
 #         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class Employees(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
+
+#mixins
+#-----------------------------
+# class Employees(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
+#     queryset = Employee.objects.all()
+#     serializer_class = EmployeeSerializer
+
+#     def get(self,request):
+#         return self.list(request)
+    
+#     def post(self,request):
+#         return self.create(request)
+    
+# class EmployeesDetails(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
+#     queryset = Employee.objects.all()
+#     serializer_class = EmployeeSerializer
+#     def get(self, request, pk):
+#         return self.retrieve(request,pk)
+    
+#     def put(self, request, pk):
+#         return self.update(request, pk)
+
+#generic
+#---------------------------
+
+class Employees(generics.ListCreateAPIView):
+
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
 
-    def get(self,request):
-        return self.list(request)
-    
-    def post(self,request):
-        return self.create(request)
-    
-class EmployeesDetails(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
+class EmployeesDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
-    def get(self, request, pk):
-        return self.retrieve(request,pk)
-    
-    def put(self, request, pk):
-        return self.update(request, pk)
+    lookup_field = 'pk'
 
+    
 
 
 
